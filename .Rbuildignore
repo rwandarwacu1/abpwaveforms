@@ -4,3 +4,8 @@
 ^dev$
 ^victor_workspace _tests_\.R$
 ^\.github$
+^doc$
+^Meta$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

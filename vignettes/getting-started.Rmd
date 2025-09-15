@@ -1,0 +1,89 @@
+---
+title: "Getting started with abpwaveforms"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with abpwaveforms}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.width = 7,
+  fig.height= 4
+)
+```
+
+## Overview
+
+abpwaveforms provides Rcpp-accelerated tools to extract fiducials and hemodynamic features from ABP/ECG/PPG signals (inspired by MATLAB BPannotate).
+
+#Main functions
+
+C++ helpers: BP_resample(), doubleDerive(), getFootIndex(), FixIndex(), getPeakIndex(), getDicroticNotchAndPeak()
+
+High-level API: extractFeaturesEnhanced(), process_condition()
+
+```{r setup}
+library(abpwaveforms)
+```
+# Quick start with example data (if shipped)
+
+```{r}
+untreated_path <- system.file("extdata", "untreated_signals.csv", package = "abpwaveforms")
+
+if (nzchar(untreated_path)) {
+  untreated <- process_condition(untreated_path)
+  summary(untreated)
+} else {
+  message("Example CSVs not found in inst/extdata/. Skipping file demo.")
+}
+
+
+```
+
+
+## Synthetic demo (runs without files)
+
+```{r}
+set.seed(1)
+n  <- 5000
+fs <- 200
+t  <- seq(0, 25, length.out = n)
+
+abp <- 90 + 25*pmax(0, sin(2*pi*1.2*t)) + stats::rnorm(n, 0, 0.5)
+ecg <- sin(2*pi*1.2*t) + stats::rnorm(n, 0, 0.1)
+ppg <- pmax(0, sin(2*pi*1.2*t)) + 0.1*stats::rnorm(n)
+
+feat <- extractFeaturesEnhanced(abp, ppg, ecg, fs = fs)
+head(feat)
+
+```
+
+
+## Minimal plots
+
+```{r}
+op <- par(mfrow = c(1,2))
+plot(feat$HR,             type = "l", xlab = "Beat", ylab = "HR (bpm)",          main = "Heart rate")
+plot(feat$pulse_pressure, type = "l", xlab = "Beat", ylab = "Pulse Pressure (mmHg)")
+par(op)
+```
+
+
+
+## Tips
+
+C++ helpers return 1-based indices (R-style).
+
+extractFeaturesEnhanced() guards AIx against division-by-zero and interpolates missing PPG samples.
+
+To cap unrealistically high HR, tighten beat spacing when calling FixIndex() (e.g., minIntervalSec = 0.4).
+
+#Reproducibility
+```{r}
+sessionInfo()
+```
+
