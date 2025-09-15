@@ -9,8 +9,15 @@
 Rcpp-backed tools for ABP/ECG/PPG fiducials and features
 (pulse pressure, AIx, RWTT, PAT, HR, etc.).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://rwandarwacu1.github.io/abpwaveforms/}
+}
+
+}
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com}
+\strong{Maintainer}: Victor Pacifique Rwandarwacu \email{first.last@example.com}
 
 }
 \keyword{internal}
